@@ -1,29 +1,54 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, Result } from "antd";
 import showError from "../utils/showError";
+import showSuccess from "../utils/showSuccess";
 import api from "../utils/api";
 import { useHistory, useLocation } from "react-router-dom";
+import { login } from "../store/actions/userActions";
+import { LoginForm } from "../types/user";
+import { useDispatch, useSelector } from "react-redux";
+import { AppState } from "../store";
 
 const Login: React.FC = () => {
   const history = useHistory();
   const location = useLocation<{ newSignUp?: boolean }>();
+  const dispatch = useDispatch();
 
-  console.log({ location });
+  const { data, loading, error } = useSelector((state: AppState) => state.user);
 
-  const onFinish = async (values: any) => {
-    console.log("Success:", values);
-    try {
-      await api.post("/users/login", values);
+  const onFinish = (values: LoginForm) => {
+    dispatch(login(values));
+  };
+
+  useEffect(() => {
+    error && showError(error);
+  }, [error]);
+
+  useEffect(() => {
+    data.username && showSuccess("You have successfully logged in!");
+  }, [data.username]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
       history.push("/");
-    } catch (error) {
-      console.log({ error });
     }
-  };
+  }, [data]);
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", { errorInfo });
-    showError(errorInfo);
-  };
+  // const onFinish = async (values: any) => {
+  //   console.log("Success:", values);
+  //   try {
+  //     await api.post("/users/login", values);
+  //     history.push("/");
+  //   } catch (error) {
+  //     console.log({ error });
+  //   }
+  // };
+
+  // const onFinishFailed = (errorInfo: any) => {
+  //   console.log("Failed:", { errorInfo });
+  //   showError(errorInfo);
+  // };
 
   return (
     <Form
@@ -32,7 +57,7 @@ const Login: React.FC = () => {
       wrapperCol={{ span: 16 }}
       initialValues={{ remember: true }}
       onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
+      // onFinishFailed={onFinishFailed}
       autoComplete="off">
       <h2 style={{ textAlign: "center", marginBottom: 40 }}>Please login</h2>
       {location.state?.newSignUp && (
