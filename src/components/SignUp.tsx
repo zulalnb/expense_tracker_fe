@@ -1,12 +1,8 @@
-import React from "react";
-import { Form, Input, InputNumber, Button, message, Space } from "antd";
-import api from "../utils/api";
+import { Form, Input, Button } from "antd";
 import { useHistory } from "react-router-dom";
-import { AxiosResponse } from "axios";
 
-const showError = (errorMessage: string) => {
-  message.error(errorMessage);
-};
+import api from "../utils/api";
+import showError from "../utils/showError";
 
 function SignUp() {
   const layout = {
@@ -30,7 +26,7 @@ function SignUp() {
   const onFinish = async (values: any) => {
     try {
       await api.post("/users/register", values);
-      history.push("/login");
+      history.push("/login", { newSignUp: true });
     } catch (error) {
       console.log({ error });
       showError((error as any).response.data.errorMessage);
