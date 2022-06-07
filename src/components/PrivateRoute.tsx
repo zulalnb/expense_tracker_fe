@@ -5,10 +5,7 @@ interface PrivateRouteProps extends RouteProps {
   component: React.FC<any>;
 }
 
-function PrivateRoutes({
-  component: Component,
-  ...theRest
-}: PrivateRouteProps) {
+function PrivateRoute({ component: Component, ...theRest }: PrivateRouteProps) {
   return (
     <Route
       {...theRest}
@@ -23,4 +20,4 @@ function PrivateRoutes({
   );
 }
 
-export default PrivateRoutes;
+export default PrivateRoute;
