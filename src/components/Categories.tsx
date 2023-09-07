@@ -1,12 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Modal, Select, Table, Tag } from "antd";
-import { Category, CategoryForm } from "../types/category";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Space,
+  Spin,
+  Table,
+  Tag
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../store";
-import { addCategory, getCategories } from "../store/actions/categoryActions";
 import { SketchPicker } from "react-color";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
-type Mode = "new" | "edit";
+import { Category, CategoryForm } from "../types/category";
+import { AppState } from "../store";
+import {
+  addCategory,
+  deleteCategory,
+  getCategories,
+  updateCategory
+} from "../store/actions/categoryActions";
+
+type Mode = "new" | "edit" | "delete";
 
 const emptyForm: CategoryForm = {
   name: "",
@@ -25,11 +42,11 @@ function Categories() {
     dispatch(getCategories());
   }, []);
 
-  useEffect(() => {}, []);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [mode, setMode] = useState<Mode>("new");
   const [form, setForm] = useState<CategoryForm>(emptyForm);
+  const [updateId, setUpdateId] = useState<number | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const showModal = (mode: Mode) => {
     setIsModalVisible(true);
@@ -38,16 +55,23 @@ function Categories() {
 
   const handleOk = () => {
     // Mode değerine göre create or update creator fonksiyonu çağır
-    dispatch(addCategory(form));
+    if (mode === "new") dispatch(addCategory(form));
+    else if (mode === "edit" && typeof updateId === "number")
+      dispatch(updateCategory(form, updateId));
+    else if (mode === "delete" && typeof deleteId === "number")
+      dispatch(deleteCategory(deleteId));
     setIsModalVisible(false);
     setMode("new");
     setForm(emptyForm);
+    setUpdateId(null);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setMode("new");
     setForm(emptyForm);
+    setUpdateId(null);
+    setDeleteId(null);
   };
 
   const columns = [
@@ -63,57 +87,93 @@ function Categories() {
       render: (text: string, category: Category) => {
         return <Tag color={category.color}>{text.toUpperCase()}</Tag>;
       }
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text: string, category: Category) => (
+        <Space size="middle">
+          <EditOutlined
+            style={{ color: "#0390fc" }}
+            onClick={() => {
+              showModal("edit");
+              setForm(category);
+              setUpdateId(category.id);
+            }}
+          />
+          <DeleteOutlined
+            style={{ color: "#c20808" }}
+            onClick={() => {
+              showModal("delete");
+              setDeleteId(category.id);
+            }}
+          />
+        </Space>
+      )
     }
-    // {
-    //   title: "Action",
-    //   key: "action",
-    //   render: (_, record) => (
-    //     <Space size="middle">
-    //       <a>Invite {record.name}</a>
-    //       <a>Delete</a>
-    //     </Space>
-    //   )
-    // }
   ];
 
   return (
     <React.Fragment>
       <div>
-        <Button type="primary" onClick={() => showModal("new")}>
-          New Category
-        </Button>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "10px"
+          }}
+        >
+          <Button type="primary" onClick={() => showModal("new")}>
+            New Category
+          </Button>
+        </div>
         <Modal
-          title={mode === "new" ? "Create New Category" : "Update Category"}
+          title={
+            mode === "new"
+              ? "Create New Category"
+              : mode === "edit"
+              ? "Update Category"
+              : mode === "delete"
+              ? "Delete Category"
+              : null
+          }
           visible={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
-          okButtonProps={{ disabled: !form.name }}>
-          <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-            <Form.Item label="Category Name">
-              <Input
-                name="name"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-            </Form.Item>
-            <Form.Item label="Category Type">
-              <Select
-                defaultValue="expense"
-                onChange={(type) => setForm({ ...form, type })}>
-                <Select.Option value="income">Income</Select.Option>
-                <Select.Option value="expense">Expense</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="Color">
-              <SketchPicker
-                color={form.color}
-                onChange={(color) => setForm({ ...form, color: color.hex })}
-              />
-            </Form.Item>
-          </Form>
+          okButtonProps={{ disabled: !form.name && mode !== "delete" }}
+        >
+          {mode === "edit" || mode === "new" ? (
+            <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+              <Form.Item label="Category Name">
+                <Input
+                  name="name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
+              </Form.Item>
+              <Form.Item label="Category Type">
+                <Select
+                  defaultValue="expense"
+                  value={form.type}
+                  onChange={(type) => setForm({ ...form, type })}
+                >
+                  <Select.Option value="income">Income</Select.Option>
+                  <Select.Option value="expense">Expense</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item label="Color">
+                <SketchPicker
+                  color={form.color}
+                  onChange={(color) => setForm({ ...form, color: color.hex })}
+                />
+              </Form.Item>
+            </Form>
+          ) : mode === "delete" ? (
+            <>Are you sure?</>
+          ) : null}
         </Modal>
       </div>
-      <Table columns={columns} dataSource={data} />
+      <Table loading={loading} columns={columns} dataSource={data} />
     </React.Fragment>
   );
 }

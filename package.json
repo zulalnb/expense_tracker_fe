@@ -5,6 +5,7 @@
   "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
+    "@ant-design/icons": "5.0.1",
     "@types/react-color": "3.0.6",
     "@types/react-router-dom": "5.1.7",
     "antd": "4.20.6",

@@ -25,7 +25,8 @@ export default function App() {
       </Header>
       <Content
         className="site-layout"
-        style={{ padding: "50px", marginTop: 64 }}>
+        style={{ padding: "50px", marginTop: 64 }}
+      >
         <Route path="/register" component={SignUp} />
         <Route path="/login" component={Login} />
         <PrivateRoute path="/categories" component={Categories} />

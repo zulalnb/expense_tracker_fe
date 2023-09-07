@@ -58,7 +58,8 @@ const Login: React.FC = () => {
       initialValues={{ remember: true }}
       onFinish={onFinish}
       // onFinishFailed={onFinishFailed}
-      autoComplete="off">
+      autoComplete="off"
+    >
       <h2 style={{ textAlign: "center", marginBottom: 40 }}>Please login</h2>
       {location.state?.newSignUp && (
         <Result
@@ -70,14 +71,16 @@ const Login: React.FC = () => {
       <Form.Item
         label="Username"
         name="username"
-        rules={[{ required: true, message: "Please input your username!" }]}>
+        rules={[{ required: true, message: "Please input your username!" }]}
+      >
         <Input />
       </Form.Item>
 
       <Form.Item
         label="Password"
         name="password"
-        rules={[{ required: true, message: "Please input your password!" }]}>
+        rules={[{ required: true, message: "Please input your password!" }]}
+      >
         <Input.Password />
       </Form.Item>
 
