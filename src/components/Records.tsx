@@ -29,8 +29,6 @@ function Records() {
     (state: AppState) => state.categories
   );
 
-  console.log(data);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [mode, setMode] = useState<Mode>("new");
   const [form, setForm] = useState<RecordForm>(emptyForm);
@@ -222,7 +220,12 @@ function Records() {
           ) : null}
         </Modal>
 
-        <Table loading={loading} columns={columns} dataSource={data} />
+        <Table
+          loading={loading}
+          columns={columns}
+          dataSource={data}
+          rowKey="id"
+        />
       </div>
     </React.Fragment>
   );
