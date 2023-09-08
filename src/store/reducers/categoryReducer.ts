@@ -38,7 +38,7 @@ const categoryReducer = (
         )
       };
     case "UPDATE_CATEGORY_ERROR":
-      return { ...state, loading: false, error: "Error updating categories" };
+      return { ...state, loading: false, error: "Error updating category" };
     case "DELETE_CATEGORY_START":
       return { ...state, loading: true, error: "" };
     case "DELETE_CATEGORY_SUCCESS":
@@ -48,7 +48,7 @@ const categoryReducer = (
         data: state.data.filter((category) => category.id !== action.payload)
       };
     case "DELETE_CATEGORY_ERROR":
-      return { ...state, loading: false, error: "Error deleting categories" };
+      return { ...state, loading: false, error: "Error deleting category" };
     default:
       return state;
   }
