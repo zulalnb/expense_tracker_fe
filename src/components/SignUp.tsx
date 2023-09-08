@@ -25,7 +25,7 @@ function SignUp() {
 
   const onFinish = async (values: any) => {
     try {
-      await api.post("/users/register", values);
+      await api().post("/users/register", values);
       history.push("/login", { newSignUp: true });
     } catch (error) {
       console.log({ error });
@@ -38,7 +38,8 @@ function SignUp() {
       {...layout}
       name="nest-messages"
       onFinish={onFinish}
-      validateMessages={validateMessages}>
+      validateMessages={validateMessages}
+    >
       <h2 style={{ textAlign: "center", marginBottom: 40 }}>
         Register for an account
       </h2>
@@ -50,13 +51,15 @@ function SignUp() {
         name="password"
         rules={[
           { required: true, message: "Please input your password!", min: 6 }
-        ]}>
+        ]}
+      >
         <Input.Password />
       </Form.Item>
       <Form.Item
         name="email"
         label="Email"
-        rules={[{ type: "email", required: true }]}>
+        rules={[{ type: "email", required: true }]}
+      >
         <Input />
       </Form.Item>
       <Form.Item name="full_name" label="Full Name">
