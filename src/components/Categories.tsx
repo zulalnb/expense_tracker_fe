@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  Select,
-  Space,
-  Spin,
-  Table,
-  Tag
-} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { SketchPicker } from "react-color";
+import { Button, Form, Input, Modal, Select, Space, Table, Tag } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
+import { Mode } from "../types/general";
 import { Category, CategoryForm } from "../types/category";
 import { AppState } from "../store";
 import {
@@ -22,8 +13,6 @@ import {
   getCategories,
   updateCategory
 } from "../store/actions/categoryActions";
-
-type Mode = "new" | "edit" | "delete";
 
 const emptyForm: CategoryForm = {
   name: "",
